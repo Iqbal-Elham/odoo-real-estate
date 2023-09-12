@@ -1,20 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    
+    
     <record id="estate_property_action" model="ir.actions.act_window">
         <field name="name">Properties</field>
         <field name="res_model">estate.property</field>
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="property_type_list_action" model="ir.actions.act_window">
+        <field name="name">Property Type</field>
+        <field name="res_model">estate.property.type</field>
+        <field name="view_mode">tree,kanban,form</field>
+    </record>
+    
+    <record id="property_tag_list_action" model="ir.actions.act_window">
+        <field name="name">Property Tags</field>
+        <field name="res_model">estate.property.tag</field>
+        <field name="view_mode">tree,kanban,form</field>
+    </record>
+
     <menuitem id="estate_menu" name="Real Estate" sequence="10" web_icon="estate,static/description/icon.png">
-        <menuitem id="advertisement_menu" name="Advertisement">
+        <menuitem id="advertisement_menu" name="Advertisement" sequence="1">
             <menuitem
                 id="propertise_menu"
                 name="Propertise"
                 action="estate_property_action"
                 sequence="1"/>
         </menuitem>
+
+
+        <menuitem id="estate_property_setting_menu" name="Settings" sequence="2">
+
+            <menuitem
+                id="estate_property_type_menu"
+                name="Property Type"
+                action="property_type_list_action"
+                sequence="10"/>
+
+            <menuitem
+                id="estate_property_tag_menu"
+                name="Property Tags"
+                action="property_tag_list_action"
+                sequence="10"/>
+
+        </menuitem>
+
+
     </menuitem>
 
 </odoo>

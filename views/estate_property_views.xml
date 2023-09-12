@@ -12,7 +12,6 @@
                 <field name="bedrooms" />
                 <field name="facades" />
                 <filter name="active" string="active" domain="[('active', '=', 'True')]" />
-                <filter name="state" string="State" domain="[('field_name', '=', 'value')]" context="{'group_by': 'field_name'}" />
                 <filter name="postcode" string="Postcodes" domain="[('postcode', '=', 'value')]" context="{'group_by': 'postcode'}" />
             </search>
         </field>
@@ -47,11 +46,14 @@
                     </div>
                     <group>
                         <group>
+                            <field name="property_tag_ids" widget="many2many_tags" />
+                            <field name="property_type_id" />
                             <field name="postcode" />
                             <field name="date_availability" />
                         </group>
                         <group>
                             <field name="expected_price" />
+                            <field name="best_price" />
                             <field name="selling_price" />
                         </group>
                         <notebook>
@@ -64,7 +66,26 @@
                                     <field name="garage" />
                                     <field name="garden_area" string="Garden Area (sqm)" />
                                     <field name="garden_orientation" />
+                                    <field name="total_area" />
+                                    <field name="active" />
                                 </group>
+                            </page>
+
+                            <page name="other_info" string="Other Info">
+                                <group>
+                                    <field name="salesman" /> 
+                                    <field name="buyer" />
+                                </group>
+                            </page>
+
+                            <page string="Offers">
+                                <field name="offers_ids">
+                                    <tree>
+                                        <field name="price" />
+                                        <field name="partner_id" />
+                                        <field name="status" />
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </group>
