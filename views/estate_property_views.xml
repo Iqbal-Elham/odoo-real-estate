@@ -38,6 +38,11 @@
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
             <form string="My new house">
+                <header>
+                    <button name="sold_action" type="object" string="Sold" class='oe_highlight' />
+                    <button name="cancel_action" type="object" string="cancel" class='oe_highlight' />
+                    <field name="state" widget="statusbar" />
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>
@@ -46,7 +51,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="property_tag_ids" widget="many2many_tags" />
+                            <field name="property_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" />
                             <field name="property_type_id" />
                             <field name="postcode" />
                             <field name="date_availability" />
@@ -64,6 +69,7 @@
                                     <field name="living_area" string="Living Area (sqm)" />
                                     <field name="facades" />
                                     <field name="garage" />
+                                    <field name="garden" />
                                     <field name="garden_area" string="Garden Area (sqm)" />
                                     <field name="garden_orientation" />
                                     <field name="total_area" />
@@ -83,6 +89,8 @@
                                     <tree>
                                         <field name="price" />
                                         <field name="partner_id" />
+                                        <button name="accept_action" type="object" icon="fa-check text-success" />
+                                        <button name="refuse_action" type="object" icon="fa-times text-danger" />
                                         <field name="status" />
                                     </tree>
                                 </field>
