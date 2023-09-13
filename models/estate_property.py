@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api
 from datetime import date, timedelta
+from odoo.exceptions import ValidationError, UserError
 
 
 class EstateProperty(models.Model):
@@ -35,6 +36,7 @@ class EstateProperty(models.Model):
     salesman = fields.Many2one('res.users', default= lambda self: self.env.uid)
     buyer = fields.Many2one('res.partner', default='')
 
+
     offers_ids = fields.One2many('estate.property.offer', 'property_id', string='Offer')
 
     total_area = fields.Float(compute='_compute_total_area')
@@ -49,6 +51,35 @@ class EstateProperty(models.Model):
     def _compute_best_price(self):
         for rec in self:
             rec.best_price = max(rec.offers_ids.mapped(lambda x: x.price)) if rec.offers_ids else 0
+    
+    @api.onchange('garden')
+    def _onchange_garden(self):
+        for rec in self:
+            if rec.garden:
+                rec.garden_area = 10
+                rec.garden_orientation = 'north'
+            else:
+                rec.garden_area = 0
+                rec.garden_orientation = ''
+    
+
+    def cancel_action(self):
+        for rec in self:
+            if rec.state == 'canceled':
+                raise UserError('The state is already cancelled')
+            elif rec.state == 'sold':
+                raise UserError('The state is already sold')
+            else:
+                rec.state = 'canceled'
+    
+    def sold_action(self):
+        for rec in self:
+            if rec.state =='sold':
+                raise UserError('The state is already sold')
+            elif rec.state == 'canceled':
+                raise UserError('The state is cancelled')
+            else:
+                rec.state ='sold'
 
 class EstatePropertyType(models.Model):
     _name = 'estate.property.type'
@@ -61,6 +92,7 @@ class EstatePropertyTag(models.Model):
     _description = 'This is the estate property tag model'
 
     name = fields.Char(string="Name", required=True)
+    color = fields.Integer()
 
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
@@ -74,3 +106,24 @@ class EstatePropertyOffer(models.Model):
         ('refused', 'Refused'),
     ])
     validity = fields.Integer()
+    deadline_date = fields.Date(compute='_compute_deadline_date')
+
+    @api.depends('create_date')
+    def _compute_deadline_date(self):
+        for rec in self:
+            rec.deadline_date = rec.create_date + timedelta(days = rec.validity) if rec.create_date else False
+    
+    def accept_action(self):
+        for rec in self:
+            if rec.status == 'accepted':
+                raise UserError('The status is already accepted')
+            elif rec.status =='refused':
+                raise UserError('The status is already refused')
+            else:
+                rec.status = 'accepted'
+                rec.property_id.selling_price = rec.price
+                rec.property_id.buyer = rec.partner_id
+        
+    def refuse_action(self):
+        for rec in self:
+            rec.status ='refused'
