@@ -86,7 +86,7 @@
 
                             <page string="Offers">
                                 <field name="offers_ids">
-                                    <tree>
+                                    <tree decoration-success= "status == 'accepted'" decoration-danger="status == 'refused'">
                                         <field name="price" />
                                         <field name="partner_id" />
                                         <button name="accept_action" type="object" icon="fa-check text-success" />

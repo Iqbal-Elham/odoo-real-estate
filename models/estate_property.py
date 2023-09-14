@@ -42,6 +42,25 @@ class EstateProperty(models.Model):
     total_area = fields.Float(compute='_compute_total_area')
     best_price = fields.Float(compute='_compute_best_price')
 
+    _sql_constraints = [
+        (
+            'positive_expected_price',
+            'CHECK(expected_price >= 0)',
+            'The expected price must be greater than 0'
+        ),
+        (
+            'positive_selling_price',
+            'CHECK(selling_price >= 0)',
+            'The selling price must be greater than 0'
+        )
+    ]
+
+    @api.constrains('selling_price')
+    def _check_selling_price(self):
+        for rec in self:
+            if rec.selling_price < rec.expected_price * 0.9:
+                raise ValidationError('The selling price must be greater than 90% of the expected price')
+
     @api.depends('living_area', 'garden_area')
     def _compute_total_area(self):
         for rec in self:
@@ -94,6 +113,14 @@ class EstatePropertyTag(models.Model):
     name = fields.Char(string="Name", required=True)
     color = fields.Integer()
 
+    _sql_constraints = [
+        (
+            'unique_name',
+            'UNIQUE(name)',
+            'The name must be unique'
+        )
+    ]
+
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'This is the estate property offer model'
@@ -107,6 +134,14 @@ class EstatePropertyOffer(models.Model):
     ])
     validity = fields.Integer()
     deadline_date = fields.Date(compute='_compute_deadline_date')
+
+    _sql_constraints = [
+        (
+            'positive_price',
+            'CHECK(price >= 0)',
+            'The price must be greater than 0'
+        )
+    ]
 
     @api.depends('create_date')
     def _compute_deadline_date(self):
