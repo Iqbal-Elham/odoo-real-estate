@@ -11,8 +11,13 @@
                 <field name="expected_price" />
                 <field name="bedrooms" />
                 <field name="facades" />
+                <field name="living_area" filter_domain="[('living_area', '>=', self)]"/>
+                <filter name="available" string="Available" domain="[('state', 'in', ['new', 'offer_received'])]"/>   
                 <filter name="active" string="active" domain="[('active', '=', 'True')]" />
                 <filter name="postcode" string="Postcodes" domain="[('postcode', '=', 'value')]" context="{'group_by': 'postcode'}" />
+                <group>
+                    <filter name="state" string="Status" context="{'group_by': 'state'}" />
+                </group>
             </search>
         </field>
     </record>
@@ -23,12 +28,14 @@
         <field name="arch" type="xml">
             <tree string="">
                 <field name="name" />
+                <field name="property_type_id" />
                 <field name="postcode" />
+                <field name="property_tag_ids" string="Tags" widget="many2many_tags" options="{'color_field': 'color'}" />
                 <field name="bedrooms" />
                 <field name="living_area" string="Living Area (sqm)"/>
                 <field name="expected_price" />
                 <field name="selling_price" />
-                <field name="date_availability" />
+                <field name="date_availability" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -86,7 +93,7 @@
 
                             <page string="Offers">
                                 <field name="offers_ids" attrs="{'readonly': [('state', 'in', ('offer_accepted', 'sold', 'canceled'))]}">
-                                    <tree decoration-success= "status == 'accepted'" decoration-danger="status == 'refused'">
+                                    <tree decoration-success= "status == 'accepted'" decoration-danger="status == 'refused'" editable="bottom">
                                         <field name="price" />
                                         <field name="partner_id" />
                                         <button name="accept_action" type="object" icon="fa-check text-success" attrs="{'invisible': [('status', 'in', ('accepted','refused'))]}" />
@@ -100,6 +107,16 @@
                     </group>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <record id="estate_property_tag_view_tree" model="ir.ui.view">
+        <field name="name">estate.property.tag.view.tree</field>
+        <field name="model">estate.property.tag</field>
+        <field name="arch" type="xml">
+            <tree string="" editable="bottom">
+                <field name="name" />
+            </tree>
         </field>
     </record>
 
@@ -165,6 +182,7 @@
             </tree>
         </field>
     </record>
+
 
 
 </odoo>
