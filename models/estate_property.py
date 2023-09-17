@@ -41,6 +41,7 @@ class EstateProperty(models.Model):
 
     total_area = fields.Float(compute='_compute_total_area')
     best_price = fields.Float(compute='_compute_best_price')
+    _order = "id desc"
 
     _sql_constraints = [
         (
@@ -105,10 +106,32 @@ class EstatePropertyType(models.Model):
     _description = 'This is the estate property type model'
 
     name = fields.Char(string="Name", required=True)
+    property_ids = fields.One2many('estate.property', 'property_type_id')
+    offer_count = fields.Integer(compute='_compute_offer_count')
+    offer_ids = fields.One2many('estate.property.offer', 'property_type_id')
+    _order = "name"
+    sequence = fields.Integer()
+
+    def open_offers(self):
+        for rec in self:
+            return {
+                'name': 'Offers',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'tree,form',
+                'res_model': 'estate.property.offer',
+                'domain': [('property_type_id', '=', rec.id)],
+            }
+        
+    
+    @api.depends('offer_ids')
+    def _compute_offer_count(self):
+        for rec in self:
+            rec.offer_count = len(rec.offer_ids)
 
 class EstatePropertyTag(models.Model):
     _name = 'estate.property.tag'
     _description = 'This is the estate property tag model'
+    _order = "name"
 
     name = fields.Char(string="Name", required=True)
     color = fields.Integer()
@@ -124,6 +147,8 @@ class EstatePropertyTag(models.Model):
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'This is the estate property offer model'
+    # _rec_name = 'partner_id'
+    _order = "price desc"
 
     property_id = fields.Many2one('estate.property', string="Property")
     partner_id = fields.Many2one('res.partner', string="Partner")
@@ -134,6 +159,8 @@ class EstatePropertyOffer(models.Model):
     ])
     validity = fields.Integer()
     deadline_date = fields.Date(compute='_compute_deadline_date')
+
+    property_type_id = fields.Many2one(related='property_id.property_type_id', store=True)
 
     _sql_constraints = [
         (
@@ -158,6 +185,7 @@ class EstatePropertyOffer(models.Model):
                 rec.status = 'accepted'
                 rec.property_id.selling_price = rec.price
                 rec.property_id.buyer = rec.partner_id
+                rec.property_id.state = 'offer_accepted'
         
     def refuse_action(self):
         for rec in self:
