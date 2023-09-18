@@ -31,3 +31,14 @@ class EstateProperty(models.Model):
         self.invoice_id = invoice.id
 
         return super(EstateProperty, self).sold_action()
+    
+
+    def open_invoice(self):
+        for rec in self:
+            return {
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'name': 'Invoice',
+                'res_model': 'account.move',
+                'res_id': rec.invoice_id.id,
+            }
