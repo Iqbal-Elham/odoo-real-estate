@@ -11,10 +11,12 @@
                 <field name="expected_price" />
                 <field name="bedrooms" />
                 <field name="facades" />
-                <field name="living_area" filter_domain="[('living_area', '>=', self)]"/>
-                <filter name="available" string="Available" domain="[('state', 'in', ['new', 'offer_received'])]"/>   
+                <field name="living_area" filter_domain="[('living_area', '>=', self)]" />
+                <filter name="available" string="Available"
+                    domain="[('state', 'in', ['new', 'offer_received'])]" />
                 <filter name="active" string="active" domain="[('active', '=', 'True')]" />
-                <filter name="postcode" string="Postcodes" domain="[('postcode', '=', 'value')]" context="{'group_by': 'postcode'}" />
+                <filter name="postcode" string="Postcodes" domain="[('postcode', '=', 'value')]"
+                    context="{'group_by': 'postcode'}" />
                 <group>
                     <filter name="state" string="Status" context="{'group_by': 'state'}" />
                 </group>
@@ -26,17 +28,21 @@
         <field name="name">estate.property.view.tree</field>
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
-            <tree string="" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'">
+            <tree string="" decoration-success="state in ['offer_received', 'offer_accepted']"
+                decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'">
                 <field name="name" />
                 <field name="property_type_id" />
                 <field name="postcode" />
-                <field name="property_tag_ids" string="Tags" widget="many2many_tags" options="{'color_field': 'color'}" />
+                <field name="property_tag_ids" string="Tags" widget="many2many_tags"
+                    options="{'color_field': 'color'}" />
                 <field name="bedrooms" />
-                <field name="living_area" string="Living Area (sqm)"/>
+                <field name="living_area" string="Living Area (sqm)" />
                 <field name="expected_price" />
                 <field name="selling_price" />
-                <field name="date_availability" optional="hide"/>
-                <field name="state" widget="badge" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'"/>
+                <field name="date_availability" optional="hide" />
+                <field name="state" widget="badge"
+                    decoration-success="state in ['offer_received', 'offer_accepted']"
+                    decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'" />
             </tree>
         </field>
     </record>
@@ -47,8 +53,10 @@
         <field name="arch" type="xml">
             <form string="My new house">
                 <header>
-                    <button name="sold_action" type="object" string="Sold" class='oe_highlight' attrs="{'invisible': [('state', 'in', ('sold','canceled'))]}" />
-                    <button name="cancel_action" type="object" string="cancel" class='oe_highlight' attrs="{'invisible': [('state', 'in', ('sold','canceled'))]}" />
+                    <button name="sold_action" type="object" string="Sold" class='oe_highlight'
+                        attrs="{'invisible': [('state', 'in', ('sold','canceled'))]}" />
+                    <button name="cancel_action" type="object" string="cancel" class='oe_highlight'
+                        attrs="{'invisible': [('state', 'in', ('sold','canceled'))]}" />
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
@@ -59,8 +67,10 @@
                     </div>
                     <group>
                         <group>
-                            <field name="property_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" />
-                            <field name="property_type_id" options="{'no_create': True, 'no_open': True}" />
+                            <field name="property_tag_ids" widget="many2many_tags"
+                                options="{'color_field': 'color'}" />
+                            <field name="property_type_id"
+                                options="{'no_create': True, 'no_open': True}" />
                             <field name="postcode" />
                             <field name="date_availability" />
                         </group>
@@ -78,8 +88,10 @@
                                     <field name="facades" />
                                     <field name="garage" />
                                     <field name="garden" />
-                                    <field name="garden_area" string="Garden Area (sqm)" attrs="{'invisible': [('garden', '=', False)], 'required': [('garden', '=', 'True')]}" />
-                                    <field name="garden_orientation" attrs="{'invisible': [('garden', '=', False)]}" />
+                                    <field name="garden_area" string="Garden Area (sqm)"
+                                        attrs="{'invisible': [('garden', '=', False)], 'required': [('garden', '=', 'True')]}" />
+                                    <field name="garden_orientation"
+                                        attrs="{'invisible': [('garden', '=', False)]}" />
                                     <field name="total_area" />
                                     <field name="active" />
                                 </group>
@@ -87,20 +99,26 @@
 
                             <page name="other_info" string="Other Info">
                                 <group>
-                                    <field name="salesman" /> 
+                                    <field name="salesman" />
                                     <field name="buyer" />
                                 </group>
                             </page>
 
                             <page string="Offers">
-                                <field name="offers_ids" attrs="{'readonly': [('state', 'in', ('offer_accepted', 'sold', 'canceled'))]}">
-                                    <tree decoration-success= "status == 'accepted'" decoration-danger="status == 'refused'" editable="bottom">
+                                <field name="offers_ids"
+                                    attrs="{'readonly': [('state', 'in', ('offer_accepted', 'sold', 'canceled'))]}">
+                                    <tree decoration-success="status == 'accepted'"
+                                        decoration-danger="status == 'refused'" editable="bottom">
                                         <field name="price" />
                                         <field name="partner_id" />
-                                        <button name="accept_action" type="object" icon="fa-check text-success" attrs="{'invisible': [('status', 'in', ('accepted','refused'))]}" />
-                                        <button name="refuse_action" type="object" icon="fa-times text-danger" attrs="{'invisible': [('status', 'in', ('accepted','refused'))]}" />
+                                        <button name="accept_action" type="object"
+                                            icon="fa-check text-success"
+                                            attrs="{'invisible': [('status', 'in', ('accepted','refused'))]}" />
+                                        <button name="refuse_action" type="object"
+                                            icon="fa-times text-danger"
+                                            attrs="{'invisible': [('status', 'in', ('accepted','refused'))]}" />
                                         <field name="status" />
-                                        
+
                                     </tree>
                                 </field>
                             </page>
@@ -139,20 +157,21 @@
                         </h1>
                     </div>
                     <div class="oe_button_box" name="button_box">
-                        <button name="open_offers" type="object" class="oe_stat_button" icon="fa-money" string="Offers">
-                            <field name="offer_count" string="Offers" widget="statinfo"/>
+                        <button name="open_offers" type="object" class="oe_stat_button"
+                            icon="fa-money" string="Offers">
+                            <field name="offer_count" string="Offers" widget="statinfo" />
                         </button>
                     </div>
                     <notebook>
                         <page name="properties" string="Properties">
                             <field name="property_ids">
-        
+
                                 <tree>
-                                    <field name="name" string="Title" /> 
-                                    <field name="expected_price" />   
-                                    <field name="state" string="status" />   
+                                    <field name="name" string="Title" />
+                                    <field name="expected_price" />
+                                    <field name="state" string="status" />
                                 </tree>
-                                    
+
                             </field>
                         </page>
                     </notebook>
@@ -183,7 +202,6 @@
             </tree>
         </field>
     </record>
-
 
 
 </odoo>
