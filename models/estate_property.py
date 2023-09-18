@@ -56,6 +56,12 @@ class EstateProperty(models.Model):
         )
     ]
 
+    def unlink(self):
+        for rec in self:
+            if rec.state not in ('new', 'canceled'):
+                raise UserError('You cannot delete a property that is not in the new or canceled state')
+            return super(EstateProperty, self).unlink()
+
     @api.constrains('selling_price')
     def _check_selling_price(self):
         for rec in self:
@@ -169,6 +175,16 @@ class EstatePropertyOffer(models.Model):
             'The price must be greater than 0'
         )
     ]
+
+    @api.model
+    def create(self, values):
+        estate_property = self.env['estate.property'].browse(values.get('property_id'))
+        estate_property.state = 'offer_received'
+        if values.get('price') <= estate_property.best_price:
+            raise ValidationError(f"The offer must be higher than {estate_property.best_price}")
+        res = super(EstatePropertyOffer, self).create(values)
+        return res
+
 
     @api.depends('create_date')
     def _compute_deadline_date(self):
