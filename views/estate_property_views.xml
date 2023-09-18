@@ -26,7 +26,7 @@
         <field name="name">estate.property.view.tree</field>
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
-            <tree string="">
+            <tree string="" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'">
                 <field name="name" />
                 <field name="property_type_id" />
                 <field name="postcode" />
@@ -36,6 +36,7 @@
                 <field name="expected_price" />
                 <field name="selling_price" />
                 <field name="date_availability" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-bf="state == 'offer_accepted'" decoration-muted="state == 'sold'"/>
             </tree>
         </field>
     </record>
