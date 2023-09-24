@@ -47,6 +47,43 @@
         </field>
     </record>
 
+    <record id="estate_property_view_kanban" model="ir.ui.view">
+        <field name="name">estate.property.view.kanban</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="property_type_id">
+                <field name="name" />
+                <field name="expected_price" />
+                <field name="best_price" />
+                <field name="selling_price" />
+                <field name="state" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div>
+                                <strong>
+                                    <t t-out="record.name.raw_value" />
+                                </strong>
+                            </div>
+                            <div> Expected price: <t t-out="record.expected_price.raw_value" />
+                            </div>
+                            <div t-if="record.state.raw_value == 'offer_received'"> Best price: 
+                                <t t-out="record.best_price.raw_value" />
+                            </div>
+                            <div t-if="record.state.raw_value == 'offer_accepted'"> 
+                                Selling price: <t t-out="record.selling_price.raw_value" />
+                            </div>
+                            <div>
+                                <field name="property_tag_ids" widget="many2many_tags"
+                                    options="{'color_field': 'color'}" />
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="estate_property_view_form" model="ir.ui.view">
         <field name="name">estate.property.form</field>
         <field name="model">estate.property</field>
@@ -122,6 +159,11 @@
 
                                     </tree>
                                 </field>
+                            </page>
+                            <page name="offer_accept_reason" string="Accept Reason" attrs="{'invisible': [('offer_accept_reason', '=', False)]}">
+                                <group>
+                                    <field name="offer_accept_reason" readonly="1"/>
+                                </group>
                             </page>
                         </notebook>
                     </group>

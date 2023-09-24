@@ -29,6 +29,7 @@
         'views/estate_menus.xml',
         'views/estate_property_views.xml',
         'views/estate_users.xml',
+        'wizards/accept_reason_view.xml'
     ],
     # only loaded in demonstration mode
     # 'demo': [

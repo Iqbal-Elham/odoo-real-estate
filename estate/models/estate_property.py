@@ -9,11 +9,13 @@ class EstateProperty(models.Model):
     _name = 'estate.property'
     _description = 'This is the estate property model'
 
+    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
+
     name = fields.Char(string="Name", required=True)
     description = fields.Text(string="Description")
     postcode = fields.Char(string="Post code")
-    expected_price = fields.Float(string="Expected price", required=True)
-    selling_price = fields.Float(string="Selling price", readonly=True)
+    expected_price = fields.Monetary(string="Expected price", required=True)
+    selling_price = fields.Monetary(string="Selling price", readonly=True)
     bedrooms = fields.Integer(string="Bedrooms", default=2)
     living_area = fields.Integer(string="Living area")
     date_availability = fields.Date(string="Date", copy=False, default=lambda self: date.today() + timedelta(90))
@@ -40,7 +42,8 @@ class EstateProperty(models.Model):
     offers_ids = fields.One2many('estate.property.offer', 'property_id', string='Offer')
 
     total_area = fields.Float(compute='_compute_total_area')
-    best_price = fields.Float(compute='_compute_best_price')
+    best_price = fields.Monetary(compute='_compute_best_price')
+    offer_accept_reason = fields.Text()
     _order = "id desc"
 
     _sql_constraints = [
@@ -193,15 +196,15 @@ class EstatePropertyOffer(models.Model):
     
     def accept_action(self):
         for rec in self:
-            if rec.status == 'accepted':
-                raise UserError('The status is already accepted')
-            elif rec.status =='refused':
-                raise UserError('The status is already refused')
-            else:
-                rec.status = 'accepted'
-                rec.property_id.selling_price = rec.price
-                rec.property_id.buyer = rec.partner_id
-                rec.property_id.state = 'offer_accepted'
+            return {
+                'name': 'Accept Reason',
+                'type': 'ir.actions.act_window',
+                'res_model': 'accept.reason.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'default_property_id': rec.property_id.id, 'default_offer_id': rec.id}
+
+            }
         
     def refuse_action(self):
         for rec in self:
