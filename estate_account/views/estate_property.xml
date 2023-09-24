@@ -6,9 +6,12 @@
         <field name="model">estate.property</field>
         <field name="inherit_id" ref="estate.estate_property_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='expected_price']" position="before">
+                <field name="currency_id" />
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="open_invoice" type="object" class="oe_stat_button" icon="fa-book" string="Invoice">
-                    <!-- <field name="field_name" string="" widget="statinfo"/> -->
+                <button name="open_invoice" type="object" class="oe_stat_button" icon="fa-book" string="Invoice" attrs="{'invisible': [('invoice_amount', '=', 0)]}">
+                    <field name="invoice_amount" string="Invoice" widget="statinfo"/>
                 </button>
             </xpath>
         </field>

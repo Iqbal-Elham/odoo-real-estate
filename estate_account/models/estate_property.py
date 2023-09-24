@@ -7,6 +7,18 @@ class EstateProperty(models.Model):
     _inherit = 'estate.property'
 
     invoice_id = fields.Many2one('account.move')
+    invoice_amount = fields.Monetary(compute='_compute_invoice_amount' )
+    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
+    
+    
+    
+    @api.depends('invoice_id')
+    def _compute_invoice_amount(self):
+        for record in self:
+            record.invoice_amount = 0
+            if record.invoice_id:
+                record.invoice_amount = record.invoice_id.amount_total
+
 
     def sold_action(self):
 
@@ -14,6 +26,7 @@ class EstateProperty(models.Model):
             'partner_id': self.buyer.id,
             'move_type': 'out_invoice',
             'property_id': self.id,
+            'currency_id': self.currency_id.id,
 
             'invoice_line_ids': [
                 Command.create({
